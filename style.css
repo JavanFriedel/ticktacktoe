@@ -1,0 +1,48 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* variables! */
+  --boardOutline: 3px solid black;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.gameContainer {
+  height: 500px;
+  width: 500px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+}
+
+.gameTile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing:content-box;
+  font-size: 100px;
+}
+
+
+/* Create Border for game */
+.gameTile:nth-child(n+1):nth-child(-n+6){
+  border-bottom: var(--boardOutline);
+}
+
+.gameTile:nth-child(3n-2){
+  border-right: var(--boardOutline);
+}
+
+.gameTile:nth-child(3n){
+  border-left: var(--boardOutline);
+}
