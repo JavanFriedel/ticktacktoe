@@ -9,12 +9,31 @@
     <script src="script.js" defer></script>
   </head>
   <body>
-    <h2>Tick-Tick-Toe</h2>
+    <h2 id="title">Tick-Tick-Toe</h2>
     <div class="gameWrapper">
       <div class="player" id="player1">
         <abbr title="Click to edit name." class="playerName" data-player="1">
           Player 1
         </abbr>
+        <div class="tokenSelect">
+          <h4>Pick Your Piece:</h4>
+          <div class="tokenOption" data-player="1" data-selected="true">✖️</div>
+          <div class="tokenOption" data-player="1" data-selected="false">
+            ⭕
+          </div>
+          <div class="tokenOption" data-player="1" data-selected="false">
+            🌮
+          </div>
+          <div class="tokenOption" data-player="1" data-selected="false">
+            😇
+          </div>
+          <div class="tokenOption" data-player="1" data-selected="false">
+            👿
+          </div>
+          <div class="tokenOption" data-player="1" data-selected="false">
+            🍔
+          </div>
+        </div>
       </div>
       <div class="gameContainer">
         <div class="gameTile" data-index="0"></div>
@@ -32,6 +51,25 @@
           <abbr title="Click to edit name." class="playerName" data-player="2">
             Player 2
           </abbr>
+        </div>
+        <div class="tokenSelect">
+          <h4>Pick Your Piece:</h4>
+          <div class="tokenOption" data-player="2" data-selected="false">
+            ✖️
+          </div>
+          <div class="tokenOption" data-player="2" data-selected="true">⭕</div>
+          <div class="tokenOption" data-player="2" data-selected="false">
+            🌮
+          </div>
+          <div class="tokenOption" data-player="2" data-selected="false">
+            😇
+          </div>
+          <div class="tokenOption" data-player="2" data-selected="false">
+            👿
+          </div>
+          <div class="tokenOption" data-player="2" data-selected="false">
+            🍔
+          </div>
         </div>
       </div>
     </div>

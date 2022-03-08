@@ -49,7 +49,9 @@ span > img {
   height: 500px;
   background-color: var(--playerbg);
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
   padding: 10px;
 }
 
@@ -88,7 +90,23 @@ span > img {
   margin: 20px;
 }
 
-.nameEntry {
-  display: inline;
-  font-size: 20px;
+.tokenSelect {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+.tokenSelect > h4 {
+  margin-bottom: -15px;
+  grid-column: 1 / -1;
+  text-decoration:underline;
+}
+
+.tokenOption {
+  font-size: 60px;
+  cursor: pointer;
+}
+
+.tokenOption[data-selected="true"]{
+  background-color: rgba(255, 255, 255, 0.507);
 }

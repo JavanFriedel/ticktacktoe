@@ -4,8 +4,8 @@ const GameBoard = (() => {
   const gameState = ["", "", "", "", "", "", "", "", ""];
   let roundsPlayed = 0;
 
-  const bindClick () {
-    
+  const bindClick = (event) => {
+    GameBoard.placeMarker(activePlayer, event.target.dataset.index)
   }
 
   const render = () => {
@@ -19,7 +19,7 @@ const GameBoard = (() => {
       console.log("Spot is take, cannot place here");
       return;
     }
-    GameBoard.gameState[index] = activePlayer.marker;
+    GameBoard.gameState[index] = activePlayer.marker();
     roundsPlayed++;
     checkGameOver(activePlayer, roundsPlayed);
     toggleMarker();
@@ -30,22 +30,21 @@ const GameBoard = (() => {
     for (let i = 0; i < gameTiles.length; i++){
       gameState[i] = ""
     }
-   winnerDeclare.innerText = ""
+    winnerDeclare.innerText = "Tick-Tack-Toe"
     roundsPlayed = 0;
+    bindEvents();
     render();
   }
 
   const bindEvents = () => {
     document.querySelectorAll('.gameTile').forEach(tile => {
-      tile.addEventListener('click', function bindClick () {
-        GameBoard.placeMarker(activePlayer, tile.dataset.index)
-      })
+      tile.addEventListener('click', bindClick)
     })
   }
 
   const unBindEvents = () => {
     document.querySelectorAll('.gameTile').forEach(tile => {
-      tile.removeEventListener('click', bindClick());
+      tile.removeEventListener('click', bindClick);
     })
   }
   
@@ -60,17 +59,25 @@ const GameBoard = (() => {
   }
 })();
 
-function bindClick (event) {
-  GameBoard.placeMarker(activePlayer, tile.dataset.index)
-}
-
-const makePlayer = (name, symbol) => {
+const MakePlayer = (name, symbol) => {
   const playerName = name;
-  const playerMarker = symbol;
+  let playerMarker = symbol;
+  
+  const changePiece = element => {
+    const playerOptions = document.querySelectorAll(`.tokenOption[data-selected="true"][data-player="${element.dataset.player}"]`)
+    playerOptions.forEach( e => {
+      e.dataset.selected = "false"
+    })
+    element.dataset.selected = "true";
+    playerMarker = element.innerText;
+  }
+
+  const getMarker = () => playerMarker;
 
   return {
     name: playerName,
-    marker: playerMarker
+    marker: getMarker,
+    changePiece
   }
 }
 
@@ -85,12 +92,9 @@ function toggleMarker () {
 //function is too big to put in object and keep the object clean
 function checkGameOver (player, roundsPlayed) {
   let tiles = GameBoard.gameState
-  let marker = player.marker
+  let marker = player.marker()
 
-  if(roundsPlayed == 9){
-    console.log("All Spots Filled. Tie Game!")
-    return
-  }
+  
 
   //check every row
   for(let i = 0; i < tiles.length; i+=3){
@@ -103,6 +107,7 @@ function checkGameOver (player, roundsPlayed) {
     if(rowSum >= 3){
      winnerDeclare.innerText = `${player.name} Wins via row!`
      GameBoard.unBindEvents();
+     return
     }
   }
 
@@ -118,6 +123,7 @@ function checkGameOver (player, roundsPlayed) {
     if(colSum >= 3){
      winnerDeclare.innerText = `${player.name} Wins via column`
      GameBoard.unBindEvents();
+     return
     }
   }
 
@@ -125,11 +131,18 @@ function checkGameOver (player, roundsPlayed) {
   if(tiles[0] == marker && tiles[4] == marker && tiles[8] == marker){
     winnerDeclare.innerText = `${player.name} Wins via diagnol`
     GameBoard.unBindEvents();
+    return
   }
 
   if(tiles[2] == marker && tiles[4] == marker && tiles[6] == marker){
     winnerDeclare.innerText = `${player.name} Wins via diagnol`
     GameBoard.unBindEvents();
+    return
+  }
+
+  if(roundsPlayed == 9){
+    console.log("All Spots Filled. Tie Game!")
+    return
   }
 
 }
@@ -160,19 +173,23 @@ function editName (obj, inputBox) {
     return
   }
 
-  player1.name = newName;
-}
+  player1.name = newName;}
 
-const player1 = makePlayer('Player One', '🤩')
-const player2 = makePlayer('Player Two', '👿')
 
+
+const player1 = MakePlayer('Player One', '✖️')
+const player2 = MakePlayer('Computer', '⭕')
+
+// global referrences
 let activePlayer = player1;
+const winnerDeclare = document.querySelector('#title')
 
-const winnerDeclare = document.querySelector('.winnerDeclare')
-
-
+// Initalize game Board
 GameBoard.bindEvents();
 
+
+
+// --- Global Event Listeners ----
 document.getElementById('resetBtn').addEventListener('click', () => {
   GameBoard.resetGame();
 })
@@ -180,6 +197,18 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 document.querySelectorAll('.playerName').forEach(element => {
   element.addEventListener('click', (element) => {
     createInput(element.target);
+  })
+})
+
+document.querySelectorAll('.tokenOption[data-player="2"]').forEach(element => {
+  element.addEventListener('click', function (element){    
+    player2.changePiece(element.target)    
+  })
+})
+
+document.querySelectorAll('.tokenOption[data-player="1"]').forEach(element => {
+  element.addEventListener('click', function (element){    
+    player1.changePiece(element.target)    
   })
 })
 
