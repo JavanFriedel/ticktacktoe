@@ -1,12 +1,15 @@
+// Gameboard state and helper methods
 const GameBoard = (() => {
   const gameTiles = document.getElementsByClassName('gameTile'); 
   const gameState = ["", "", "", "", "", "", "", "", ""];
   let roundsPlayed = 0;
-  const displayBoard = () => {
+
+  const render = () => {
     for(let i = 0; i < gameTiles.length; i++){
       gameTiles[i].innerText = GameBoard.gameState[i]; 
     }
   };
+
   const placeMarker = (marker, index) => {    
     if(GameBoard.gameState[index] != ''){
       console.log("Spot is take, cannot place here");
@@ -16,21 +19,43 @@ const GameBoard = (() => {
     roundsPlayed++;
     checkGameOver(marker, roundsPlayed);
     toggleMarker();
-    GameBoard.displayBoard()
+    GameBoard.render()
   };
+
+  const resetGame = () => {
+    for (let i = 0; i < gameTiles.length; i++){
+      gameState[i] = ""
+    }
+   winnerDeclare.innerText = ""
+    roundsPlayed = 0;
+    render();
+  }
   
   return {
     gameState,
-    displayBoard,
+    render,
     placeMarker,
-    gameTiles
+    gameTiles,
+    resetGame
   }
 })();
 
-let currentSymbol = "🤩"
 
+const makePlayer = (name, symbol) => {
+  const playerName = name;
+  const playerMarker = symbol;
+
+  return {
+    playerName,
+    playerMarker
+  }
+}
+
+let currentSymbol = "🤩"
 let player1 = "🤩"
 let player2 = "👿"
+
+const winnerDeclare = document.querySelector('.winnerDeclare')
 
 function toggleMarker () {
   if (currentSymbol == "🤩"){
@@ -48,6 +73,7 @@ function checkGameOver (symbol, roundsPlayed) {
     console.log("All Spots Filled. Tie Game!")
     return
   }
+
   //check every row
   for(let i = 0; i < tiles.length; i+=3){
     let rowSum = 0;
@@ -57,7 +83,7 @@ function checkGameOver (symbol, roundsPlayed) {
       }
     }
     if(rowSum >= 3){
-      console.log(`${marker} Wins via row!`)
+     winnerDeclare.innerText = `${marker} Wins via row!`
     }
   }
 
@@ -71,7 +97,7 @@ function checkGameOver (symbol, roundsPlayed) {
       }
     }
     if(colSum >= 3){
-      console.log(`${marker} Wins via column`)
+     winnerDeclare.innerText = `${marker} Wins via column`
     }
   }
 
@@ -91,6 +117,11 @@ document.querySelectorAll('.gameTile').forEach(tile => {
     GameBoard.placeMarker(currentSymbol, tile.dataset.index)
   })
 })
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  GameBoard.resetGame();
+})
+
 
 // TODO
 // - Add abaility for players to pick their names
