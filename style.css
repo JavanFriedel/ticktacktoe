@@ -48,6 +48,9 @@ span > img {
   width: 300px;
   height: 500px;
   background-color: var(--playerbg);
+  display: flex;
+  justify-content: center;
+  padding: 10px;
 }
 
 .gameContainer {
@@ -83,4 +86,9 @@ span > img {
 
 #resetBtn {
   margin: 20px;
+}
+
+.nameEntry {
+  display: inline;
+  font-size: 20px;
 }

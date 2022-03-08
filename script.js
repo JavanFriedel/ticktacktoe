@@ -4,20 +4,24 @@ const GameBoard = (() => {
   const gameState = ["", "", "", "", "", "", "", "", ""];
   let roundsPlayed = 0;
 
+  const bindClick () {
+    
+  }
+
   const render = () => {
     for(let i = 0; i < gameTiles.length; i++){
       gameTiles[i].innerText = GameBoard.gameState[i]; 
     }
   };
 
-  const placeMarker = (marker, index) => {    
+  const placeMarker = (activePlayer, index) => {    
     if(GameBoard.gameState[index] != ''){
       console.log("Spot is take, cannot place here");
       return;
     }
-    GameBoard.gameState[index] = marker;
+    GameBoard.gameState[index] = activePlayer.marker;
     roundsPlayed++;
-    checkGameOver(marker, roundsPlayed);
+    checkGameOver(activePlayer, roundsPlayed);
     toggleMarker();
     GameBoard.render()
   };
@@ -30,44 +34,58 @@ const GameBoard = (() => {
     roundsPlayed = 0;
     render();
   }
+
+  const bindEvents = () => {
+    document.querySelectorAll('.gameTile').forEach(tile => {
+      tile.addEventListener('click', function bindClick () {
+        GameBoard.placeMarker(activePlayer, tile.dataset.index)
+      })
+    })
+  }
+
+  const unBindEvents = () => {
+    document.querySelectorAll('.gameTile').forEach(tile => {
+      tile.removeEventListener('click', bindClick());
+    })
+  }
   
   return {
     gameState,
     render,
     placeMarker,
     gameTiles,
-    resetGame
+    resetGame,
+    bindEvents,
+    unBindEvents
   }
 })();
 
+function bindClick (event) {
+  GameBoard.placeMarker(activePlayer, tile.dataset.index)
+}
 
 const makePlayer = (name, symbol) => {
   const playerName = name;
   const playerMarker = symbol;
 
   return {
-    playerName,
-    playerMarker
+    name: playerName,
+    marker: playerMarker
   }
 }
-
-let currentSymbol = "🤩"
-let player1 = "🤩"
-let player2 = "👿"
-
-const winnerDeclare = document.querySelector('.winnerDeclare')
 
 function toggleMarker () {
-  if (currentSymbol == "🤩"){
-    currentSymbol = "👿";
+  if (activePlayer == player1){
+    activePlayer = player2;
     return
   }
-  currentSymbol = "🤩"
+  activePlayer = player1;
 }
 
-function checkGameOver (symbol, roundsPlayed) {
+//function is too big to put in object and keep the object clean
+function checkGameOver (player, roundsPlayed) {
   let tiles = GameBoard.gameState
-  let marker = symbol
+  let marker = player.marker
 
   if(roundsPlayed == 9){
     console.log("All Spots Filled. Tie Game!")
@@ -83,7 +101,8 @@ function checkGameOver (symbol, roundsPlayed) {
       }
     }
     if(rowSum >= 3){
-     winnerDeclare.innerText = `${marker} Wins via row!`
+     winnerDeclare.innerText = `${player.name} Wins via row!`
+     GameBoard.unBindEvents();
     }
   }
 
@@ -97,29 +116,71 @@ function checkGameOver (symbol, roundsPlayed) {
       }
     }
     if(colSum >= 3){
-     winnerDeclare.innerText = `${marker} Wins via column`
+     winnerDeclare.innerText = `${player.name} Wins via column`
+     GameBoard.unBindEvents();
     }
   }
 
   //check diagnol - brute force is probabaly easiest here
   if(tiles[0] == marker && tiles[4] == marker && tiles[8] == marker){
-    console.log(`${marker} Wins via diagnol`)
+    winnerDeclare.innerText = `${player.name} Wins via diagnol`
+    GameBoard.unBindEvents();
   }
 
   if(tiles[2] == marker && tiles[4] == marker && tiles[6] == marker){
-    console.log(`${marker} Wins via diagnol`)
+    winnerDeclare.innerText = `${player.name} Wins via diagnol`
+    GameBoard.unBindEvents();
   }
 
 }
 
-document.querySelectorAll('.gameTile').forEach(tile => {
-  tile.addEventListener('click', () => {
-    GameBoard.placeMarker(currentSymbol, tile.dataset.index)
+function createInput (obj) {
+  const inputBox = document.createElement('input')
+  console.log(obj)
+  inputBox.id = `Input${obj.dataset.player}`
+
+  inputBox.addEventListener('keyup', (event) => {
+    if(event.key == "Enter"){
+      editName(obj, inputBox)
+    }
   })
-})
+
+
+  obj.innerText = '';
+  obj.appendChild(inputBox)
+}
+
+function editName (obj, inputBox) {
+  const newName = inputBox.value;
+  inputBox.remove();
+  obj.innerText = newName;
+
+  if(obj.dataset.player == 1){
+    player1.name = newName;
+    return
+  }
+
+  player1.name = newName;
+}
+
+const player1 = makePlayer('Player One', '🤩')
+const player2 = makePlayer('Player Two', '👿')
+
+let activePlayer = player1;
+
+const winnerDeclare = document.querySelector('.winnerDeclare')
+
+
+GameBoard.bindEvents();
 
 document.getElementById('resetBtn').addEventListener('click', () => {
   GameBoard.resetGame();
+})
+
+document.querySelectorAll('.playerName').forEach(element => {
+  element.addEventListener('click', (element) => {
+    createInput(element.target);
+  })
 })
 
 
