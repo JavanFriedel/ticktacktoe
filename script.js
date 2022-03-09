@@ -30,6 +30,9 @@ const GameBoard = (() => {
     for (let i = 0; i < gameTiles.length; i++){
       gameState[i] = ""
     }
+
+    document.querySelector('.winner').classList.remove('winner');
+    document.querySelector('.loser').classList.remove('loser')
     winnerDeclare.innerText = "Tick-Tack-Toe"
     roundsPlayed = 0;
     bindEvents();
@@ -82,17 +85,33 @@ const MakePlayer = (name, symbol) => {
 }
 
 function toggleMarker () {
-  if (activePlayer == player1){
+  document.querySelector('.selected').classList.remove('selected')
+  if (activePlayer == player1){    
+    document.querySelector('#player2').classList.add('selected')
     activePlayer = player2;
     return
   }
   activePlayer = player1;
+  document.querySelector('#player1').classList.add('selected')
+
+  
 }
 
 //function is too big to put in object and keep the object clean
 function checkGameOver (player, roundsPlayed) {
   let tiles = GameBoard.gameState
   let marker = player.marker()
+
+  let playerWinner;
+  let playerLoser;
+
+  if (player == player1){
+    playerWinner = document.querySelector('#player1')
+    playerLoser = document.querySelector('#player2')
+  } else {
+    playerWinner = document.querySelector('#player2')
+    playerLoser = document.querySelector('#player1')    
+  }
 
   
 
@@ -106,6 +125,8 @@ function checkGameOver (player, roundsPlayed) {
     }
     if(rowSum >= 3){
      winnerDeclare.innerText = `${player.name} Wins via row!`
+     playerWinner.classList.add("winner")
+     playerLoser.classList.add("loser")
      GameBoard.unBindEvents();
      return
     }
@@ -122,6 +143,8 @@ function checkGameOver (player, roundsPlayed) {
     }
     if(colSum >= 3){
      winnerDeclare.innerText = `${player.name} Wins via column`
+     playerWinner.classList.add("winner")
+     playerLoser.classList.add("loser")
      GameBoard.unBindEvents();
      return
     }
@@ -130,12 +153,16 @@ function checkGameOver (player, roundsPlayed) {
   //check diagnol - brute force is probabaly easiest here
   if(tiles[0] == marker && tiles[4] == marker && tiles[8] == marker){
     winnerDeclare.innerText = `${player.name} Wins via diagnol`
+    playerWinner.classList.add("winner")
+    playerLoser.classList.add("loser")
     GameBoard.unBindEvents();
     return
   }
 
   if(tiles[2] == marker && tiles[4] == marker && tiles[6] == marker){
     winnerDeclare.innerText = `${player.name} Wins via diagnol`
+    playerWinner.classList.add("winner")
+    playerLoser.classList.add("loser")
     GameBoard.unBindEvents();
     return
   }
@@ -149,8 +176,9 @@ function checkGameOver (player, roundsPlayed) {
 
 function createInput (obj) {
   const inputBox = document.createElement('input')
-  console.log(obj)
   inputBox.id = `Input${obj.dataset.player}`
+
+
 
   inputBox.addEventListener('keyup', (event) => {
     if(event.key == "Enter"){
@@ -158,8 +186,12 @@ function createInput (obj) {
     }
   })
 
+  inputBox.addEventListener('focusout', () => {    
+      editName(obj, inputBox)    
+  })
 
-  obj.innerText = '';
+
+  obj.innerHTML = '';
   obj.appendChild(inputBox)
 }
 
@@ -173,12 +205,13 @@ function editName (obj, inputBox) {
     return
   }
 
-  player1.name = newName;}
+  player2.name = newName;
+}
 
 
 
-const player1 = MakePlayer('Player One', '✖️')
-const player2 = MakePlayer('Computer', '⭕')
+const player1 = MakePlayer('Player 1', '✖️')
+const player2 = MakePlayer('Player 2', '⭕')
 
 // global referrences
 let activePlayer = player1;
@@ -186,8 +219,6 @@ const winnerDeclare = document.querySelector('#title')
 
 // Initalize game Board
 GameBoard.bindEvents();
-
-
 
 // --- Global Event Listeners ----
 document.getElementById('resetBtn').addEventListener('click', () => {
@@ -211,6 +242,7 @@ document.querySelectorAll('.tokenOption[data-player="1"]').forEach(element => {
     player1.changePiece(element.target)    
   })
 })
+
 
 
 // TODO

@@ -88,25 +88,64 @@ span > img {
 
 #resetBtn {
   margin: 20px;
+  padding: 10px 20px;
+  background-color: rgb(14, 118, 255);
+  color: white;
+  border-radius: 5px;
+  border: 0;
+  box-shadow: 2px 2px 2px black, -2px -2px 2px black;
+  cursor: pointer;
+  font-weight: bold;
 }
 
 .tokenSelect {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 20px;
+  gap: 10px;
 }
 
 .tokenSelect > h4 {
-  margin-bottom: -15px;
+  margin-bottom: -5px;
   grid-column: 1 / -1;
   text-decoration:underline;
 }
 
 .tokenOption {
   font-size: 60px;
+  padding: 10px;
   cursor: pointer;
 }
 
 .tokenOption[data-selected="true"]{
   background-color: rgba(255, 255, 255, 0.507);
+}
+
+.nameEntry {
+  font-size: 48px;
+}
+
+abbr {
+  text-decoration: none;
+}
+
+input{
+  font-size: 48px;
+  height: 48px;
+  width: 100%;
+  text-align: center;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  background: rgba(255, 255, 255, 0.219);
+  border: none;
+}
+
+.selected {
+  outline: 4px solid rgb(128, 50, 255);
+}
+
+.winner {
+  outline: 4px solid rgb(0, 218, 0);
+}
+
+.loser {
+  outline: 4px solid rgb(218, 0, 36);
 }
